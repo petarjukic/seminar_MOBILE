@@ -31,7 +31,6 @@ import java.util.Locale;
 
 public class RecipeListActivity extends AppCompatActivity {
 
-    private RecyclerView recView;
     private Button loginButton, logoutButton, homeButton;
 
     private List<Recipe> recipeList;
@@ -55,8 +54,6 @@ public class RecipeListActivity extends AppCompatActivity {
         logoutButton = findViewById(R.id.logout_button);
         homeButton = findViewById(R.id.home_button);
 
-        recView = findViewById(R.id.recipe_rec_view);
-        recView.setLayoutManager(new LinearLayoutManager(this));
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
@@ -99,7 +96,6 @@ public class RecipeListActivity extends AppCompatActivity {
                 .equalTo(category);
 
         query.addListenerForSingleValueEvent(valueEventListener);
-
     }
 
     ValueEventListener valueEventListener = new ValueEventListener() {

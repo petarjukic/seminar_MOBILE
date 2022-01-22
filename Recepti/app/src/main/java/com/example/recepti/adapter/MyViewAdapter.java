@@ -1,6 +1,7 @@
 package com.example.recepti.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.recepti.R;
+import com.example.recepti.RecipeDetailActivity;
 import com.example.recepti.models.Recipe;
 import com.squareup.picasso.Picasso;
 
@@ -40,21 +42,28 @@ public class MyViewAdapter extends RecyclerView.Adapter<MyViewAdapter.MyViewHold
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         holder.getTitle().setText(recipeList.get(position).getTitle());
-        holder.getDescription().setText(recipeList.get(position).getDescription());
+        holder.getTitle().setOnClickListener(v -> {
+            Intent intent = new Intent(context, RecipeDetailActivity.class);
+            intent.putExtra("detailView", recipeList.get(position).getTitle());
+            context.startActivity(intent);
+        });
         Picasso.get().load(recipeList.get(position).getImage()).into(holder.getImage());
-        //ZA SLIKU
-        //Picasso.get().load(items.get(position).owner.getAvatar_url()).into(holder.getImageView());
+        holder.getImage().setOnClickListener(v -> {
+            Intent intent = new Intent(context, RecipeDetailActivity.class);
+            intent.putExtra("detailView", recipeList.get(position).getTitle());
+            context.startActivity(intent);
+        });
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         private final TextView title;
-        private final TextView description;
+        //private final TextView description;
         private final ImageView image;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.recipe_title_view);
-            description = itemView.findViewById(R.id.recpie_description);
+            //description = itemView.findViewById(R.id.recpie_description);
             image = itemView.findViewById(R.id.recipe_image);
         }
 
@@ -62,9 +71,9 @@ public class MyViewAdapter extends RecyclerView.Adapter<MyViewAdapter.MyViewHold
             return title;
         }
 
-        public TextView getDescription() {
+        /*public TextView getDescription() {
             return description;
-        }
+        }*/
 
         public ImageView getImage() {
             return image;

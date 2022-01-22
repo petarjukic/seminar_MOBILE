@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Recepti</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="toplo_predjelo">Toplo predjelo</string>
+    <string name="hladno_predjelo">Hladno predjelo</string>
+    <string name="glavno_jelo_riba">Glavno jelo riba</string>
+    <string name="glavno_jelo_meso">Glavno jelo meso</string>
+    <string name="glavno_jelo_vege">Glavno jelo vege</string>
+    <string name="dezerti_bez_glutena">Dezerti bez glutena</string>
+    <string name="dezerti_bez_secera">Dezerti bez secera</string>
+    <string name="tradicionalni_dezerti">Tradicionalni dezerti</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="register">Register</string>
+    <string name="full_name">Full name</string>
+    <string name="age">Age</string>
+    <string name="back">Back</string>
+    <string name="home">Home</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="image_path">Image path</string>
+    <string name="add_recipe">Add recipe</string>
+    <string name="number_of_rates">Number of rates</string>
+    <string name="category">Category</string>
+</resources>

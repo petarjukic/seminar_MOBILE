@@ -122,7 +122,6 @@ public class RecipeListActivity extends AppCompatActivity {
             //Toast.makeText(getApplicationContext(), category + " ovo je u kategoriji", Toast.LENGTH_SHORT).show();
         }
         Query query = dbRef.orderByChild("category").equalTo(category);
-        Log.d("KVERIJ", query.toString());
 
         Query query1 = FirebaseDatabase.getInstance().getReference("recipe")
                 .orderByChild("category")

@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RatingBar;
@@ -24,7 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class RecipeDetailActivity extends AppCompatActivity {
 
-    private TextView recipeDescription, numberOfRates, recipeTitle;
+    private TextView recipeDescription, numberOfRates, recipeTitle, authorText, authorName;
     private Button loginButton, logoutButton, homeButton;
     private RatingBar recipeRate;
 
@@ -43,6 +44,8 @@ public class RecipeDetailActivity extends AppCompatActivity {
         logoutButton = findViewById(R.id.logout_button2);
         homeButton = findViewById(R.id.home2);
         recipeRate = findViewById(R.id.rate_bar);
+        authorText = findViewById(R.id.author_text);
+        authorName = findViewById(R.id.author_name);
 
         dbRef = FirebaseDatabase.getInstance().getReference("recipe");
         mAuth = FirebaseAuth.getInstance();
@@ -85,11 +88,28 @@ public class RecipeDetailActivity extends AppCompatActivity {
         query.addListenerForSingleValueEvent(valueEventListener);
 
         // OVO JE ZA DOHVACANJE ODABRANIH VRIJEDNOSTI, A MENI TRIBA PRIKAZIVANJE
-        int numOfStars = recipeRate.getNumStars();
-        float getStarRating = recipeRate.getRating(); //OVO BI TRIBA DOHVATIT IZ BAZE
+        //int numOfStars = recipeRate.getNumStars();
+        //float getStarRating = recipeRate.getRating(); //OVO BI TRIBA DOHVATIT IZ BAZE
 
         //OVO BI MOGLO BIT ZA POSTAVLJANJE OCJENE TJ ZA PRIKAZ
-        recipeRate.setRating(getStarRating);
+        //recipeRate.setRating(getStarRating);
+        /*recipeRate.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_BUTTON_PRESS) {
+                    Toast.makeText(getApplicationContext(), recipeRate.getNumStars() + " AAAA", Toast.LENGTH_LONG).show();
+                }
+                return false;
+            }
+        });*/
+        //TODO Save into database
+        recipeRate.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                String rateValue = String.valueOf(recipeRate.getRating());
+                Toast.makeText(getApplicationContext(), rateValue + " AAAAA", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     ValueEventListener valueEventListener = new ValueEventListener() {
@@ -112,5 +132,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
         //Toast.makeText(getApplicationContext(), recipe.getTitle(), Toast.LENGTH_LONG).show();
         recipeTitle.setText(recipe.getTitle());
         recipeDescription.setText(recipe.getDescription());
+        authorName.setText(recipe.getUser());
     }
 }

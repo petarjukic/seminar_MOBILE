@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="92dp"
         android:layout_marginTop="56dp"
-        android:text="@string/number_of_rates"
+        android:text="@string/average_rate"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/description_recpie_view" />
 
@@ -44,6 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="200dp"
         android:numStars="5"
+        android:stepSize="1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.438"

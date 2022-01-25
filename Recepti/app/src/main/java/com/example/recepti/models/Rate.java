@@ -4,37 +4,40 @@ import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
 public class Rate {
-    private int numberOfRates;
-    private float mark;
-    private String recipe;
+    //private int numberOfRates;
+    private int mark;
+    //private String recipe;
+    private String recipeId;
 
-    public Rate(int numberOfRates, float mark, String recipe) {
-        this.numberOfRates = numberOfRates;
+    public Rate() {}
+
+    public Rate(int mark, String recipeId) {
+        //this.numberOfRates = numberOfRates;
         this.mark = mark;
-        this.recipe = recipe;
+        this.recipeId = recipeId;
     }
 
-    public int getNumberOfRates() {
+    /*public int getNumberOfRates() {
         return numberOfRates;
-    }
+    }*/
 
-    public void setNumberOfRates(int numberOfRates) {
+    /*public void setNumberOfRates(int numberOfRates) {
         this.numberOfRates = numberOfRates;
-    }
+    }*/
 
-    public float getMark() {
+    public int getMark() {
         return mark;
     }
 
-    public void setMark(float mark) {
+    public void setMark(int mark) {
         this.mark = mark;
     }
 
-    public String getRecipe() {
-        return recipe;
+    public String getRecipeId() {
+        return recipeId;
     }
 
-    public void setRecipe(String recipe) {
-        this.recipe = recipe;
+    public void setRecipeId(String recipeId) {
+        this.recipeId = recipeId;
     }
 }

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.recepti.models.Recipe;
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,9 +21,12 @@ import java.util.UUID;
 
 public class AddNewRecipeActivity extends AppCompatActivity {
 
-    private EditText category, title, description, imagePath;
+    private EditText title, description, imagePath;
+    private TextView category;
     private Button insertRecipe;
     private List<Recipe> recipeList;
+
+    private String mCategory;
 
     private FirebaseAuth mAuth;
     private DatabaseReference dbRef;
@@ -41,11 +45,16 @@ public class AddNewRecipeActivity extends AppCompatActivity {
         dbRef = FirebaseDatabase.getInstance().getReference("recipe");
         recipeList = new ArrayList<>();
 
+        mCategory = "";
+        if (getIntent().hasExtra("category")) {
+            mCategory = getIntent().getStringExtra("category");
+            category.setText(mCategory);
+        }
+
         insertRecipe.setOnClickListener(v -> addToDatabase());
     }
 
     private void addToDatabase() {
-        String categoryStr = category.getText().toString().trim();
         String titleStr = title.getText().toString().trim();
         String descriptionStr = description.getText().toString().trim();
         String imagePathStr = imagePath.getText().toString().trim();
@@ -55,12 +64,6 @@ public class AddNewRecipeActivity extends AppCompatActivity {
         assert currentUser != null;
         String currentUserStr = currentUser.getEmail();
 
-
-        if(categoryStr.isEmpty()) {
-            category.setError("Category is required");
-            category.requestFocus();
-            return;
-        }
 
         if(titleStr.isEmpty()) {
             title.setError("Title is required");
@@ -80,10 +83,8 @@ public class AddNewRecipeActivity extends AppCompatActivity {
             return;
         }
 
-        Recipe recipe = new Recipe(categoryStr, titleStr, imagePathStr, descriptionStr, currentUserStr);
+        Recipe recipe = new Recipe(mCategory, titleStr, imagePathStr, descriptionStr, currentUserStr);
         dbRef.child(uid).setValue(recipe);
-
-        Intent intent = new Intent(AddNewRecipeActivity.this, MainActivity.class);
-        startActivity(intent);
+        finish();
     }
 }

@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.recepti.adapter.MyViewAdapter;
 import com.example.recepti.models.Category;
 import com.example.recepti.models.Recipe;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -32,6 +33,7 @@ import java.util.Locale;
 public class RecipeListActivity extends AppCompatActivity {
 
     private Button loginButton, logoutButton, homeButton;
+    private FloatingActionButton addNewRecipe;
 
     private List<Recipe> recipeList;
     private MyViewAdapter recipeAdapter;
@@ -53,6 +55,7 @@ public class RecipeListActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.login_button);
         logoutButton = findViewById(R.id.logout_button);
         homeButton = findViewById(R.id.home_button);
+        addNewRecipe = findViewById(R.id.floatingActionButton);
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -61,8 +64,15 @@ public class RecipeListActivity extends AppCompatActivity {
         recipeAdapter = new MyViewAdapter(this, recipeList);
         recViewRecipe.setAdapter(recipeAdapter);
 
+        String category = "";
+        if (getIntent().hasExtra("category")) {
+            category = getIntent().getStringExtra("category");
+            category = category.toLowerCase();
+        }
+
         if (currentUser == null) {
             loginButton.setVisibility(View.VISIBLE);
+            addNewRecipe.setVisibility(View.GONE);
             loginButton.setOnClickListener(v -> {
                 Intent intent = new Intent(RecipeListActivity.this, LoginUserActivity.class);
                 startActivity(intent);
@@ -72,11 +82,16 @@ public class RecipeListActivity extends AppCompatActivity {
         } else {
             loginButton.setVisibility(View.GONE);
             logoutButton.setVisibility(View.VISIBLE);
-
             logoutButton.setOnClickListener(v -> {
                 FirebaseAuth.getInstance().signOut();
                 Toast.makeText(RecipeListActivity.this, "You are signed out", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(RecipeListActivity.this, MainActivity.class));
+            });
+            String finalCategory = category;
+            addNewRecipe.setOnClickListener(v -> {
+                Intent intent = new Intent(RecipeListActivity.this, AddNewRecipeActivity.class);
+                intent.putExtra("category", finalCategory);
+                startActivity(intent);
             });
         }
 
@@ -84,12 +99,6 @@ public class RecipeListActivity extends AppCompatActivity {
             Intent intent = new Intent(RecipeListActivity.this, MainActivity.class);
             startActivity(intent);
         });
-        String category = "";
-        if (getIntent().hasExtra("category")) {
-            category = getIntent().getStringExtra("category");
-            category = category.toLowerCase();
-            //Toast.makeText(getApplicationContext(), category + " ovo je u kategoriji", Toast.LENGTH_SHORT).show();
-        }
 
         Query query = FirebaseDatabase.getInstance().getReference("recipe")
                 .orderByChild("category")

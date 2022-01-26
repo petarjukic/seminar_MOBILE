@@ -1,19 +1,18 @@
 package com.example.recepti;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.recepti.adapter.MyViewAdapterCategory;
 import com.example.recepti.models.Category;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -30,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
 
     private Button loginButton;
     private Button logoutButton;
-    private FloatingActionButton addRecipe;
     private RecyclerView recViewCategory;
     private MyViewAdapterCategory adapterCategory;
     private List<Category> categoryList;
@@ -55,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Category category = dataSnapshot.getValue(Category.class);
                     categoryList.add(category);
                 }
@@ -69,12 +67,11 @@ public class MainActivity extends AppCompatActivity {
 
         loginButton = findViewById(R.id.login_button);
         logoutButton = findViewById(R.id.logout_button);
-        addRecipe = findViewById(R.id.add_recipe_button);
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        if(currentUser == null) {
+        if (currentUser == null) {
             loginButton.setVisibility(View.VISIBLE);
             loginButton.setOnClickListener(v -> {
                 Intent intent = new Intent(MainActivity.this, LoginUserActivity.class);
@@ -82,20 +79,14 @@ public class MainActivity extends AppCompatActivity {
                 loginButton.setVisibility(View.GONE);
             });
             Toast.makeText(MainActivity.this, "You are not logged in", Toast.LENGTH_SHORT).show();
-        }
-        else {
+        } else {
             loginButton.setVisibility(View.GONE);
             logoutButton.setVisibility(View.VISIBLE);
-            addRecipe.setVisibility(View.VISIBLE);
 
             logoutButton.setOnClickListener(v -> {
                 FirebaseAuth.getInstance().signOut();
                 Toast.makeText(MainActivity.this, "You are signed out", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(MainActivity.this, MainActivity.class));
-            });
-            addRecipe.setOnClickListener(v -> {
-                Intent intent = new Intent(MainActivity.this, AddNewRecipeActivity.class);
-                startActivity(intent);
             });
         }
     }

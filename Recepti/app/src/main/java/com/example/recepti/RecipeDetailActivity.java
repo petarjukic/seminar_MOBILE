@@ -30,6 +30,7 @@ import java.util.UUID;
 public class RecipeDetailActivity extends AppCompatActivity {
 
     private TextView recipeDescription, numberView, recipeTitle, authorText, authorName;
+    private TextView numberOfRatesText, numberOfRatesNum;
     private Button loginButton, logoutButton, homeButton;
     private RatingBar recipeRate;
 
@@ -63,6 +64,8 @@ public class RecipeDetailActivity extends AppCompatActivity {
         recipeRate = findViewById(R.id.rate_bar);
         authorText = findViewById(R.id.author_text);
         authorName = findViewById(R.id.author_name);
+        numberOfRatesText = findViewById(R.id.number_of_rates_text);
+        numberOfRatesNum = findViewById(R.id.number_of_rates_num);
 
         dbRef = FirebaseDatabase.getInstance().getReference("recipe");
         dbRefRate = FirebaseDatabase.getInstance().getReference("rate");
@@ -76,13 +79,14 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
         if (currentUser == null) {
             loginButton.setVisibility(View.VISIBLE);
+            recipeRate.setVisibility(View.GONE);
             loginButton.setOnClickListener(v -> {
                 Intent intent = new Intent(RecipeDetailActivity.this, LoginUserActivity.class);
                 startActivity(intent);
                 loginButton.setVisibility(View.GONE);
             });
             Toast.makeText(RecipeDetailActivity.this, "You are not logged in", Toast.LENGTH_SHORT).show();
-        } else {
+        } else if(!currentUser.getEmail().equals("aaa")) { //TODO get user from database
             loginButton.setVisibility(View.GONE);
             logoutButton.setVisibility(View.VISIBLE);
 
@@ -92,10 +96,22 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 startActivity(new Intent(RecipeDetailActivity.this, MainActivity.class));
             });
         }
+        else {
+            recipeRate.setVisibility(View.GONE);
+        }
 
         String title = "";
-        if (getIntent().hasExtra("detailView")) {
+        String categoryDetail = ""; //TODO finish
+        String descriptionDetail = "";
+        String createdUser = "";
+
+        if (getIntent().hasExtra("detailView") && getIntent().hasExtra("description")
+            && getIntent().hasExtra("user") && getIntent().hasExtra("categoryDetail")
+        ) {
             title = getIntent().getStringExtra("detailView");
+            categoryDetail = getIntent().getStringExtra("categoryDetail");
+            descriptionDetail = getIntent().getStringExtra("description");
+            createdUser = getIntent().getStringExtra("user");
         }
 
         Query query = FirebaseDatabase.getInstance().getReference("recipe")
@@ -187,7 +203,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
                     sveOcjene.add(rrRate);
                     allRates.add(rrRate.getMark());
                 }
-                //Log.d("receptId", "cila tablica ocjena " + allRates.size());
             }
 
             @Override
@@ -203,6 +218,8 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 averageRate += nesto.get(i);
             }
             avgRate = Double.valueOf(averageRate / nesto.size()).toString();
+
+            numberOfRatesNum.setText(Integer.toString(nesto.size()));
         }
         numberView.setText(avgRate);
     }

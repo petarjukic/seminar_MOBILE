@@ -45,6 +45,9 @@ public class MyViewAdapter extends RecyclerView.Adapter<MyViewAdapter.MyViewHold
         holder.getTitle().setOnClickListener(v -> {
             Intent intent = new Intent(context, RecipeDetailActivity.class);
             intent.putExtra("detailView", recipeList.get(position).getTitle());
+            intent.putExtra("description", recipeList.get(position).getDescription());
+            intent.putExtra("user", recipeList.get(position).getUser());
+            intent.putExtra("categoryDetail", recipeList.get(position).getCategory());
             context.startActivity(intent);
         });
         Picasso.get().load(recipeList.get(position).getImage()).into(holder.getImage());

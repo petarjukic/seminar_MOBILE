@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.recepti.models.Rate;
-import com.example.recepti.models.Recipe;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -30,16 +29,19 @@ import java.util.UUID;
 public class RecipeDetailActivity extends AppCompatActivity {
 
     private TextView recipeDescription, numberView, recipeTitle, authorText, authorName;
-    private TextView numberOfRatesText, numberOfRatesNum;
+    private TextView numberOfRatesText, numberOfRatesNum, categotyDetailTextView, categoryText;
     private Button loginButton, logoutButton, homeButton;
     private RatingBar recipeRate;
 
     private FirebaseAuth mAuth;
-    private DatabaseReference dbRef, dbRefRate;
+    private DatabaseReference dbRefRate;
 
     private Rate mRate;
     private String uid;
-    private Boolean flag;
+    private String titleIntent = "";
+    private String categoryDetail = "";
+    private String descriptionDetail = "";
+    private String createdUser = "";
     private List<Integer> allRates;
     private List<Integer> nesto;
     private List<Rate> sveOcjene;
@@ -50,7 +52,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recipe_detail);
 
         mRate = new Rate();
-        flag = false;
         allRates = new ArrayList<>();
         sveOcjene = new ArrayList<>();
         nesto = new ArrayList<>();
@@ -66,8 +67,9 @@ public class RecipeDetailActivity extends AppCompatActivity {
         authorName = findViewById(R.id.author_name);
         numberOfRatesText = findViewById(R.id.number_of_rates_text);
         numberOfRatesNum = findViewById(R.id.number_of_rates_num);
+        categotyDetailTextView = findViewById(R.id.category_detail);
+        categoryText = findViewById(R.id.category_text);
 
-        dbRef = FirebaseDatabase.getInstance().getReference("recipe");
         dbRefRate = FirebaseDatabase.getInstance().getReference("rate");
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -83,56 +85,44 @@ public class RecipeDetailActivity extends AppCompatActivity {
             loginButton.setOnClickListener(v -> {
                 Intent intent = new Intent(RecipeDetailActivity.this, LoginUserActivity.class);
                 startActivity(intent);
-                loginButton.setVisibility(View.GONE);
             });
             Toast.makeText(RecipeDetailActivity.this, "You are not logged in", Toast.LENGTH_SHORT).show();
-        } else if(!currentUser.getEmail().equals("aaa")) { //TODO get user from database
-            loginButton.setVisibility(View.GONE);
-            logoutButton.setVisibility(View.VISIBLE);
-
-            logoutButton.setOnClickListener(v -> {
-                FirebaseAuth.getInstance().signOut();
-                Toast.makeText(RecipeDetailActivity.this, "You are signed out", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(RecipeDetailActivity.this, MainActivity.class));
-            });
+        }
+        if(getIntent().hasExtra("user")) {  // check if current user is creator of recipe
+            if(currentUser.getEmail().equals(getIntent().getStringExtra("user")) && currentUser != null) {
+                loginButton.setVisibility(View.GONE);
+                logoutButton.setVisibility(View.VISIBLE);
+                recipeRate.setVisibility(View.INVISIBLE);
+                logoutButton.setOnClickListener(v -> {
+                    FirebaseAuth.getInstance().signOut();
+                    Toast.makeText(RecipeDetailActivity.this, "You are signed out", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(RecipeDetailActivity.this, MainActivity.class));
+                });
+            }
         }
         else {
             recipeRate.setVisibility(View.GONE);
         }
 
-        String title = "";
-        String categoryDetail = ""; //TODO finish
-        String descriptionDetail = "";
-        String createdUser = "";
-
         if (getIntent().hasExtra("detailView") && getIntent().hasExtra("description")
             && getIntent().hasExtra("user") && getIntent().hasExtra("categoryDetail")
         ) {
-            title = getIntent().getStringExtra("detailView");
+            titleIntent = getIntent().getStringExtra("detailView");
             categoryDetail = getIntent().getStringExtra("categoryDetail");
             descriptionDetail = getIntent().getStringExtra("description");
             createdUser = getIntent().getStringExtra("user");
         }
 
-        Query query = FirebaseDatabase.getInstance().getReference("recipe")
-                .orderByChild("title")
-                .equalTo(title);
-
-        query.addListenerForSingleValueEvent(valueEventListener);
-
-        recipeRate.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                String rateValue = String.valueOf(recipeRate.getRating());
-                mRate.setMark((int) Double.parseDouble(rateValue));
-                uid = UUID.randomUUID().toString();
-                flag = true;
-                query.addListenerForSingleValueEvent(valueEventListener);
-            }
+        recipeRate.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
+            String rateValue = String.valueOf(recipeRate.getRating());
+            mRate.setMark((int) Double.parseDouble(rateValue));
+            uid = UUID.randomUUID().toString();
+            //query.addListenerForSingleValueEvent(valueEventListener);
         });
+        setActivity();
     }
 
-    ValueEventListener valueEventListener = new ValueEventListener() {
+    /*ValueEventListener valueEventListener = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
             for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
@@ -149,7 +139,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
                         nesto.add(r.getMark());
                     }
                 }
-                setActivity(recipe);
+                //setActivity(recipe);
                 Log.d("category", recipe.getTitle());
             }
         }
@@ -158,7 +148,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         public void onCancelled(@NonNull DatabaseError error) {
 
         }
-    };
+    };*/
 
     ValueEventListener rateValueEventListener = new ValueEventListener() {
         @Override
@@ -177,17 +167,16 @@ public class RecipeDetailActivity extends AppCompatActivity {
         }
     };
 
-    private void saveRate() {
-        flag = false;
+    /*private void saveRate() {
+        //flag = false;
         dbRefRate.child(uid).setValue(mRate);
-    }
+    }*/
 
-    private void setActivity(Recipe recipe) {
-        recipeTitle.setText(recipe.getTitle());
-        recipeDescription.setText(recipe.getDescription());
-        authorName.setText(recipe.getUser());
-        //Log.d("receptId", dbRef.push().getKey());
-        //Log.d("receptId", mRate.getMark() + " ovo je ocjena");
+    private void setActivity() {
+        recipeTitle.setText(titleIntent);
+        recipeDescription.setText(descriptionDetail);
+        authorName.setText(createdUser);
+        categotyDetailTextView.setText(categoryDetail);
 
         /*Query rateQuery = FirebaseDatabase.getInstance().getReference("rate")
                 .orderByChild("recipeId")

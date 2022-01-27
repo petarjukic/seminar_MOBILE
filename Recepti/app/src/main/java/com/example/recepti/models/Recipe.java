@@ -7,7 +7,6 @@ public class Recipe {
     private String category;
     private String title;
     private String image;
-    private int grade;
     private String description;
     private String user;
 
@@ -43,14 +42,6 @@ public class Recipe {
 
     public void setImage(String image) {
         this.image = image;
-    }
-
-    public int getGrade() {
-        return grade;
-    }
-
-    public void setGrade(int grade) {
-        this.grade = grade;
     }
 
     public String getDescription() {

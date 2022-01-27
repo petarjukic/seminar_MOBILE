@@ -54,29 +54,26 @@ public class MyViewAdapter extends RecyclerView.Adapter<MyViewAdapter.MyViewHold
         holder.getImage().setOnClickListener(v -> {
             Intent intent = new Intent(context, RecipeDetailActivity.class);
             intent.putExtra("detailView", recipeList.get(position).getTitle());
+            intent.putExtra("description", recipeList.get(position).getDescription());
+            intent.putExtra("user", recipeList.get(position).getUser());
+            intent.putExtra("categoryDetail", recipeList.get(position).getCategory());
             context.startActivity(intent);
         });
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         private final TextView title;
-        //private final TextView description;
         private final ImageView image;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.recipe_title_view);
-            //description = itemView.findViewById(R.id.recpie_description);
             image = itemView.findViewById(R.id.recipe_image);
         }
 
         public TextView getTitle() {
             return title;
         }
-
-        /*public TextView getDescription() {
-            return description;
-        }*/
 
         public ImageView getImage() {
             return image;

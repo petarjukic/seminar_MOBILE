@@ -2,12 +2,10 @@ package com.example.recepti.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,9 +41,7 @@ public class MyViewAdapterCategory extends RecyclerView.Adapter<MyViewAdapterCat
         holder.categoryText.setOnClickListener(v -> {
             Intent intent = new Intent(context, RecipeListActivity.class);
             intent.putExtra("category", category.getCategoryName());
-            //Log.d("categorija", categoryList.get(position).toString());
             context.startActivity(intent);
-            //Toast.makeText(context, category.getCategoryName(), Toast.LENGTH_SHORT).show();
         });
     }
 

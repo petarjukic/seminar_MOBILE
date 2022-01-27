@@ -141,4 +141,26 @@
         android:text="@string/number_of_rates"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rate_bar" />
+
+    <TextView
+        android:id="@+id/category_text"
+        android:layout_width="86dp"
+        android:layout_height="27dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/category"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/number_of_rates_text" />
+
+    <TextView
+        android:id="@+id/category_detail"
+        android:layout_width="131dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/category"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.106"
+        app:layout_constraintStart_toEndOf="@+id/category_text"
+        app:layout_constraintTop_toBottomOf="@+id/number_of_rates_num" />
 </androidx.constraintlayout.widget.ConstraintLayout>

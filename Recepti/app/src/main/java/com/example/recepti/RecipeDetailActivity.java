@@ -19,7 +19,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -38,23 +37,25 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
     private Rate mRate;
     private String uid;
-    private String titleIntent = "";
-    private String categoryDetail = "";
-    private String descriptionDetail = "";
-    private String createdUser = "";
-    private List<Integer> allRates;
-    private List<Integer> nesto;
-    private List<Rate> sveOcjene;
+    private String titleIntent;
+    private String categoryDetail;
+    private String descriptionDetail;
+    private String createdUser;
+
+    private List<Rate> rateList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_detail);
 
+        rateList = new ArrayList<>();
         mRate = new Rate();
-        allRates = new ArrayList<>();
-        sveOcjene = new ArrayList<>();
-        nesto = new ArrayList<>();
+
+        titleIntent = "";
+        categoryDetail = "";
+        descriptionDetail = "";
+        createdUser = "";
 
         recipeTitle = findViewById(R.id.title_detail);
         recipeDescription = findViewById(R.id.description_recpie_view);
@@ -88,20 +89,21 @@ public class RecipeDetailActivity extends AppCompatActivity {
             });
             Toast.makeText(RecipeDetailActivity.this, "You are not logged in", Toast.LENGTH_SHORT).show();
         }
-        if(getIntent().hasExtra("user")) {  // check if current user is creator of recipe
-            if(currentUser.getEmail().equals(getIntent().getStringExtra("user")) && currentUser != null) {
-                loginButton.setVisibility(View.GONE);
-                logoutButton.setVisibility(View.VISIBLE);
+        if(getIntent().hasExtra("user")) {
+            assert currentUser != null;
+            if(currentUser.getEmail().equals(getIntent().getStringExtra("user"))) { // check if current user is creator of recipe
                 recipeRate.setVisibility(View.INVISIBLE);
-                logoutButton.setOnClickListener(v -> {
-                    FirebaseAuth.getInstance().signOut();
-                    Toast.makeText(RecipeDetailActivity.this, "You are signed out", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(RecipeDetailActivity.this, MainActivity.class));
-                });
             }
-        }
-        else {
-            recipeRate.setVisibility(View.GONE);
+            else {
+                recipeRate.setVisibility(View.VISIBLE);
+            }
+            logoutButton.setVisibility(View.VISIBLE);
+            loginButton.setVisibility(View.GONE);
+            logoutButton.setOnClickListener(v -> {
+                FirebaseAuth.getInstance().signOut();
+                Toast.makeText(RecipeDetailActivity.this, "You are signed out", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(RecipeDetailActivity.this, MainActivity.class));
+            });
         }
 
         if (getIntent().hasExtra("detailView") && getIntent().hasExtra("description")
@@ -113,64 +115,51 @@ public class RecipeDetailActivity extends AppCompatActivity {
             createdUser = getIntent().getStringExtra("user");
         }
 
+        checkForMark();
         recipeRate.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
+            assert currentUser != null;
+            boolean flag = false;
             String rateValue = String.valueOf(recipeRate.getRating());
-            mRate.setMark((int) Double.parseDouble(rateValue));
             uid = UUID.randomUUID().toString();
-            //query.addListenerForSingleValueEvent(valueEventListener);
+
+            for(Rate rate: rateList) {
+                if(rate.getUser().equals(currentUser.getEmail()) && titleIntent.equals(rate.getRecipeId())) {
+                    flag = true;
+                    dbRefRate.child(rate.getUid()).child("mark").setValue((int) Double.parseDouble(rateValue));
+                    break;
+                }
+                if(rate.getMark() == (int) Double.parseDouble(rateValue)) {
+                    flag = true;
+                }
+            }
+            if(!flag) {
+                mRate.setUid(uid);
+                mRate.setMark((int) Double.parseDouble(rateValue));
+                mRate.setUser(currentUser.getEmail());
+                mRate.setRecipeId(titleIntent);
+                dbRefRate.child(uid).setValue(mRate);
+            }
+            setActivity();
         });
+
         setActivity();
     }
 
-    /*ValueEventListener valueEventListener = new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot snapshot) {
-            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                Recipe recipe = dataSnapshot.getValue(Recipe.class);
-                Log.d("receptID", "pravi id je " + dataSnapshot.getKey());
-                assert recipe != null;
-
-                if (flag) {
-                    mRate.setRecipeId(dataSnapshot.getKey());
-                    saveRate();
+    private void checkForMark() {
+        dbRefRate.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Rate mmRate = dataSnapshot.getValue(Rate.class);
+                    rateList.add(mmRate);
                 }
-                for (Rate r : sveOcjene) {
-                    if (r.getRecipeId().equals(dataSnapshot.getKey())) {
-                        nesto.add(r.getMark());
-                    }
-                }
-                //setActivity(recipe);
-                Log.d("category", recipe.getTitle());
             }
-        }
 
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-
-        }
-    };*/
-
-    ValueEventListener rateValueEventListener = new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot snapshot) {
-            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                Rate rrRate = dataSnapshot.getValue(Rate.class);
-                assert rrRate != null;
-                //Log.d("receptId", "ovo je za ocjene " + rrRate.getMark());
-                allRates.add(rrRate.getMark());
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
             }
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-
-        }
-    };
-
-    /*private void saveRate() {
-        //flag = false;
-        dbRefRate.child(uid).setValue(mRate);
-    }*/
+        });
+    }
 
     private void setActivity() {
         recipeTitle.setText(titleIntent);
@@ -178,38 +167,15 @@ public class RecipeDetailActivity extends AppCompatActivity {
         authorName.setText(createdUser);
         categotyDetailTextView.setText(categoryDetail);
 
-        /*Query rateQuery = FirebaseDatabase.getInstance().getReference("rate")
-                .orderByChild("recipeId")
-                .equalTo(mRate.getRecipeId());
-
-        rateQuery.addListenerForSingleValueEvent(rateValueEventListener);*/
-
-        dbRefRate.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    Rate rrRate = dataSnapshot.getValue(Rate.class);
-                    sveOcjene.add(rrRate);
-                    allRates.add(rrRate.getMark());
-                }
+        int averageRate = 0;
+        double average = 0.0;
+        if (rateList.size() > 0) {
+            for(Rate rate: rateList) {
+                averageRate += rate.getMark();
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-        double averageRate = 0.0;
-        String avgRate = "0";
-        if (nesto.size() > 0) {
-            for (int i = 0; i < nesto.size(); i++) {
-                averageRate += nesto.get(i);
-            }
-            avgRate = Double.valueOf(averageRate / nesto.size()).toString();
-
-            numberOfRatesNum.setText(Integer.toString(nesto.size()));
+            average = (double) (averageRate / rateList.size());
+            numberOfRatesNum.setText(Integer.toString(rateList.size()));
         }
-        numberView.setText(avgRate);
+        numberView.setText(Double.valueOf(average).toString());
     }
 }

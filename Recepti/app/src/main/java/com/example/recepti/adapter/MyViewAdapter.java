@@ -43,22 +43,21 @@ public class MyViewAdapter extends RecyclerView.Adapter<MyViewAdapter.MyViewHold
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         holder.getTitle().setText(recipeList.get(position).getTitle());
         holder.getTitle().setOnClickListener(v -> {
-            Intent intent = new Intent(context, RecipeDetailActivity.class);
-            intent.putExtra("detailView", recipeList.get(position).getTitle());
-            intent.putExtra("description", recipeList.get(position).getDescription());
-            intent.putExtra("user", recipeList.get(position).getUser());
-            intent.putExtra("categoryDetail", recipeList.get(position).getCategory());
-            context.startActivity(intent);
+            startActivity(position);
         });
         Picasso.get().load(recipeList.get(position).getImage()).into(holder.getImage());
         holder.getImage().setOnClickListener(v -> {
-            Intent intent = new Intent(context, RecipeDetailActivity.class);
-            intent.putExtra("detailView", recipeList.get(position).getTitle());
-            intent.putExtra("description", recipeList.get(position).getDescription());
-            intent.putExtra("user", recipeList.get(position).getUser());
-            intent.putExtra("categoryDetail", recipeList.get(position).getCategory());
-            context.startActivity(intent);
+            startActivity(position);
         });
+    }
+
+    private void startActivity(int position) {
+        Intent intent = new Intent(context, RecipeDetailActivity.class);
+        intent.putExtra("detailView", recipeList.get(position).getTitle());
+        intent.putExtra("description", recipeList.get(position).getDescription());
+        intent.putExtra("user", recipeList.get(position).getUser());
+        intent.putExtra("categoryDetail", recipeList.get(position).getCategory());
+        context.startActivity(intent);
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {

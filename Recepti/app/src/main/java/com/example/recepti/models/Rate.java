@@ -7,13 +7,23 @@ public class Rate {
     private int mark;
     private String user;
     private String recipeId;
+    private String uid;
 
     public Rate() {}
 
-    public Rate(int mark, String recipeId, String user) {
+    public Rate(String uid, int mark, String recipeId, String user) {
+        this.uid = uid;
         this.mark = mark;
         this.recipeId = recipeId;
         this.user = user;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public int getMark() {

@@ -99,8 +99,8 @@
 
     <TextView
         android:id="@+id/title_detail"
-        android:layout_width="159dp"
-        android:layout_height="35dp"
+        android:layout_width="262dp"
+        android:layout_height="45dp"
         android:layout_marginTop="32dp"
         android:text="@string/title"
         android:textAlignment="center"
@@ -163,4 +163,13 @@
         app:layout_constraintHorizontal_bias="0.106"
         app:layout_constraintStart_toEndOf="@+id/category_text"
         app:layout_constraintTop_toBottomOf="@+id/number_of_rates_num" />
+
+    <Button
+        android:id="@+id/get_rate_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Get Rate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="611dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

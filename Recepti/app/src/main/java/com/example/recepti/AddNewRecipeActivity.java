@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.recepti.models.Recipe;
 import com.google.firebase.auth.FirebaseAuth;
@@ -85,6 +86,9 @@ public class AddNewRecipeActivity extends AppCompatActivity {
 
         Recipe recipe = new Recipe(mCategory, titleStr, imagePathStr, descriptionStr, currentUserStr);
         dbRef.child(uid).setValue(recipe);
-        finish();
+        Toast.makeText(AddNewRecipeActivity.this, "Recipe added", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(AddNewRecipeActivity.this, RecipeListActivity.class);
+        intent.putExtra("category", mCategory);
+        startActivity(intent);
     }
 }

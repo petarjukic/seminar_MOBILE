@@ -42,13 +42,9 @@ public class MyViewAdapter extends RecyclerView.Adapter<MyViewAdapter.MyViewHold
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         holder.getTitle().setText(recipeList.get(position).getTitle());
-        holder.getTitle().setOnClickListener(v -> {
-            startActivity(position);
-        });
+        holder.getTitle().setOnClickListener(v -> startActivity(position));
         Picasso.get().load(recipeList.get(position).getImage()).into(holder.getImage());
-        holder.getImage().setOnClickListener(v -> {
-            startActivity(position);
-        });
+        holder.getImage().setOnClickListener(v -> startActivity(position));
     }
 
     private void startActivity(int position) {

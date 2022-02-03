@@ -132,9 +132,10 @@ public class RecipeDetailActivity extends AppCompatActivity {
                     dbRefRate.child(rate.getUid()).child("mark").setValue((int) Double.parseDouble(rateValue));
                     break;
                 }
-                if(rate.getMark() == (int) Double.parseDouble(rateValue)) {
+               /* if(rate.getMark() == (int) Double.parseDouble(rateValue)) {
+                    Log.d("ocjena", "Prosa sam ovaj uvjet");
                     flag = true;
-                }
+                }*/
             }
             if(!flag) {
                 Rate mRate = new Rate();
@@ -168,7 +169,8 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private List<Integer> getRates(List<Rate> rates) {
         List<Integer> recipeRates = new ArrayList<>();
         for(Rate rate: rates) {
-            if(rate.getUser().equals(currentUser.getEmail()) && titleIntent.equals(rate.getRecipeId())) {
+            Log.d("ocjena", "ovo je rate " + rate.getMark() + " i " + rate.getRecipeId());
+            if(/*rate.getUser().equals(currentUser.getEmail()) && */titleIntent.equals(rate.getRecipeId())) {
                 if(recipeRates.size() == 0) {
                     recipeRates.add(rate.getMark());
                 }
@@ -177,7 +179,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
                         recipeRates.add(rate.getMark());
                     }
                 }
-                //Log.d("ocjena", "ovo je recipe rate " + recipeRates);
             }
         }
         return recipeRates;
@@ -194,10 +195,10 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
         if (rateList.size() > 0) {
             List<Integer> recipeRates = getRates(rateList);
+            Log.d("ocjena", "Ovo je reciperates " + recipeRates);
             numberOfRatesNum.setText(Integer.toString(recipeRates.size()));
             if(recipeRates.size() > 0) {
                 for (Integer rate : recipeRates) {
-                    //Log.d("ocjena", "ovo je ocjena za postavit " + rate);
                     averageRate += rate;
                 }
                 average = (double) (averageRate / recipeRates.size());
